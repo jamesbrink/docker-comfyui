@@ -45,14 +45,14 @@ sd-1.5: base
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VERSION=$(VERSION) \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-sd-1.5 \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):sd-1.5 \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-sd-1.5 \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-sd-1.5 \
 		--target=sd-1.5 \
 		--file Dockerfile .; \
 
 push-sd-1.5: sd-1.5
-	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-sd-1.5; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):sd-1.5; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-sd-1.5; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-sd-1.5;
 
@@ -63,14 +63,14 @@ sd-turbo: base
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VERSION=$(VERSION) \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-sd-turbo \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):sd-turbo \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-sd-turbo \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-sd-turbo \
 		--target=sd-turbo \
 		--file Dockerfile .; \
 
 push-sd-turbo: sd-turbo
-	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-sd-turbo; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):sd-turbo; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-sd-turbo; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-sd-turbo;
 
@@ -81,14 +81,14 @@ svd-14-frame: base
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VERSION=$(VERSION) \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-14-frame \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):svd-14-frame \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-14-frame \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-14-frame \
 		--target=svd-14-frame \
 		--file Dockerfile .; \
 
 push-svd-14-frame: svd-14-frame
-	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-14-frame; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):svd-14-frame; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-14-frame; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-14-frame;
 
@@ -99,14 +99,14 @@ svd-25-frame: base
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VERSION=$(VERSION) \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-25-frame \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):svd-25-frame \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-25-frame \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-25-frame \
 		--target=svd-25-frame \
 		--file Dockerfile .; \
 
 push-svd-25-frame: svd-25-frame
-	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-25-frame; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):svd-25-frame; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-25-frame; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-25-frame;
 
@@ -117,14 +117,14 @@ svd: base
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VERSION=$(VERSION) \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):svd \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd \
 		--target=svd \
 		--file Dockerfile .; \
 
 push-svd: svd
-	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):svd; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd;
 
@@ -135,13 +135,13 @@ all-models: base sd-turbo sd-1.5 svd-14-frame svd-25-frame svd
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VERSION=$(VERSION) \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-all-models \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):all-models \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-all-models \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-all-models \
 		--file Dockerfile .; \
 
 push-all-models: all-models
-	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-all-models; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):all-models; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-all-models; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-all-models;
 
