@@ -16,9 +16,10 @@ yes N | comfy tracking disable
 comfy --install-completion
 
 if [ $# -eq 0 ]; then
-	echo "No command was given to run, exiting."
-	exit 1
+	flags="--listen --port 8188 --preview-method auto"
+	echo "Start flags: $flags"
+	exec /usr/bin/python main.py $flags
 else
-	# git reset HEAD --hard
-	exec "$@"
+	echo "Start flags: $@"
+	exec /usr/bin/python main.py "$@"
 fi

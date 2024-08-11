@@ -22,6 +22,7 @@ RUN set -xe; \
 # Create our group & user.
 RUN set -xe; \
     useradd -u 1000 -g 100 -r -d /comfyui -s /bin/sh comfyui; \
+    mkdir -p /comfyui; \
     mkdir -p /app;
 
 # Setup ComfyUI
@@ -40,11 +41,6 @@ RUN set -xe; \
     cd /app/custom_nodes/ComfyUI-Manager; \
     pip install --no-cache-dir -r requirements.txt; \
     chown -R comfyui:users /app/custom_nodes/ComfyUI-Manager;
-
-# Setup ComfyUI Custom Scripts
-# RUN set -xe; \
-#     git clone --branch main --depth 1 https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git /comfyui/custom_nodes/ComfyUI-Custom-Scripts; \
-#     chown -R comfyui:users /comfyui/custom_nodes/ComfyUI-Custom-Scripts;
 
 # Copy our entrypoint into the container.
 COPY ./runtime-assets /
@@ -88,4 +84,4 @@ VOLUME [ "/comfyui", "/comfyui/models", "/comfyui/output", "/comfyui/input" ]
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 
 # Set the default command
-CMD [ "python", "main.py","--listen", "--port","8188", "--preview-method", "auto" ]
+CMD [ "--listen", "--port","8188", "--preview-method", "auto", "--multi-user" ]
