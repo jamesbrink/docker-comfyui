@@ -14,32 +14,37 @@ RUN set -xe; \
         python-is-python3 \
         python3 \
         python3-pip \
+        rsync \
         wget; \
     rm -rf /var/lib/apt/lists/*; \
     rm -rf /var/cache/apt;
 
 # Create our group & user.
 RUN set -xe; \
-    useradd -u 1000 -g 100 -r -d /comfyui -s /bin/sh comfyui;
+    useradd -u 1000 -g 100 -r -d /comfyui -s /bin/sh comfyui; \
+    mkdir -p /app;
 
 # Setup ComfyUI
 ARG VERSION=v0.0.5
 RUN set -xe; \
-    git clone --branch ${VERSION} --depth 1 https://github.com/comfyanonymous/ComfyUI.git /comfyui; \
-    cd /comfyui; \
+    git clone --branch ${VERSION} --depth 1 https://github.com/comfyanonymous/ComfyUI.git /app; \
+    cd /app; \
     pip install --no-cache-dir -r requirements.txt; \
     pip install --no-cache-dir comfy-cli; \
-    chown -R comfyui:users /comfyui; \
-    git config --global --add safe.directory /comfyui;
+    chown -R comfyui:users /app;
 
 # Setup ComfyUI Manager
 ARG UI_MANAGER_VERSION=2.48.6
 RUN set -xe; \
-    git clone --branch ${UI_MANAGER_VERSION} --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git /comfyui/custom_nodes/ComfyUI-Manager; \
-    cd /comfyui/custom_nodes/ComfyUI-Manager; \
+    git clone --branch ${UI_MANAGER_VERSION} --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git /app/custom_nodes/ComfyUI-Manager; \
+    cd /app/custom_nodes/ComfyUI-Manager; \
     pip install --no-cache-dir -r requirements.txt; \
-    chown -R comfyui:users /comfyui/custom_nodes/ComfyUI-Manager; \
-    git config --global --add safe.directory /comfyui/custom_nodes/ComfyUI-Manager;
+    chown -R comfyui:users /app/custom_nodes/ComfyUI-Manager;
+
+# Setup ComfyUI Custom Scripts
+# RUN set -xe; \
+#     git clone --branch main --depth 1 https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git /comfyui/custom_nodes/ComfyUI-Custom-Scripts; \
+#     chown -R comfyui:users /comfyui/custom_nodes/ComfyUI-Custom-Scripts;
 
 # Copy our entrypoint into the container.
 COPY ./runtime-assets /
@@ -47,6 +52,7 @@ COPY ./runtime-assets /
 # Ensure entrypoint is executable
 RUN set -xe; \
     chmod 0755 /usr/local/bin/entrypoint.sh; \
+    chown -R comfyui:users /app; \
     chown -R comfyui:users /comfyui;
 
 ARG VCS_REF
@@ -76,10 +82,10 @@ WORKDIR /comfyui
 EXPOSE 8188
 
 # Volumes
-VOLUME [ "/comfyui/models", "/comfyui/output", "/comfyui/input" ]
+VOLUME [ "/comfyui", "/comfyui/models", "/comfyui/output", "/comfyui/input" ]
 
 # Set the entrypoint.
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 
 # Set the default command
-CMD ["python", "main.py","--listen", "--port","8188", "--preview-method", "auto"]
+CMD [ "python", "main.py","--listen", "--port","8188", "--preview-method", "auto" ]
