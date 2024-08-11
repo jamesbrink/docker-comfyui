@@ -8,6 +8,7 @@ IMAGE_NAME              ?= comfyui
 # CUDA_VERSION            ?= $(shell nvcc --version | grep "release" | awk '{print $$6}' | cut -d',' -f1 | sed 's/V//;s/..$$//')
 CUDA_VERSION            ?= 12.2.2
 BASE_IMAGE              ?= nvidia/cuda:$(CUDA_VERSION)-runtime-ubuntu22.04
+MODELS                  ?= false
 SED                     := $(shell [[ `command -v gsed` ]] && echo gsed || echo sed)
 VERSION                 := v0.0.5
 UI_MANAGER_VERSION      ?= 2.48.6
@@ -29,7 +30,21 @@ build: list
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF) \
 		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION) \
-		--file Dockerfile .
+		--target=base \
+		--file Dockerfile .; \
+
+.PHONY: build-with-models
+build-with-models:
+	docker build \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg VCS_REF=$(VCS_REF) \
+		--build-arg VERSION=$(VERSION) \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-with-models \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-with-models \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-with-models \
+		--target=with-models \
+		--file Dockerfile .; \
 
 # List built images
 .PHONY: list
@@ -48,6 +63,12 @@ push:
 		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest; \
 		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF); \
 		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION);
+
+push-with-models:
+	echo "$$REPO_PASSWORD" | docker login -u "$(REPO_USERNAME)" --password-stdin; \
+		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-with-models; \
+		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-with-models; \
+		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-with-models;
 
 # Update README on registry
 .PHONY: push-readme

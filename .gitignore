@@ -1,3 +1,6 @@
 .DS_Store
 models
-outputs
+input
+output
+/build-assets/*
+!/build-assets/.gitkeep

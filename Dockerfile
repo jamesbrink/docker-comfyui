@@ -1,5 +1,5 @@
 ARG BASE_IMAGE=nvidia/cuda:12.2.2-runtime-ubuntu22.04
-FROM ${BASE_IMAGE}
+FROM ${BASE_IMAGE} AS base
 
 # Install deps
 RUN set -xe; \
@@ -85,3 +85,8 @@ ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 
 # Set the default command
 CMD [ "--listen", "--port","8188", "--preview-method", "auto", "--multi-user" ]
+
+# Stage for models
+FROM base AS with-models
+
+COPY ./build-assets /
