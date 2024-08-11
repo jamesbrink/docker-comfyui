@@ -7,6 +7,7 @@ rsync -avP --update /app/ /comfyui/
 export LOCAL_ADDRESS="$(ip route get 1 | awk '{print $(NF-2);exit}')"
 export PUBLIC_ADDRESS="$(curl ipinfo.io/ip)"
 echo -e "\n\n################################################################################\n"
+echo "Server running: http://$(hostname):8188"
 echo "Server will be locally available at: http://$LOCAL_ADDRESS:8188"
 echo -e "Server will be publicly available at: http://$PUBLIC_ADDRESS:8188\n"
 echo -e "################################################################################\n\n"
