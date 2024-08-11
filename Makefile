@@ -17,11 +17,11 @@ BUILD_DATE              := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Default target is to build container
 .PHONY: default
-default: build
+default: base
 
 # Build the docker image
-.PHONY: build
-build: list
+.PHONY: base
+base:
 	docker build \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
@@ -33,18 +33,99 @@ build: list
 		--target=base \
 		--file Dockerfile .; \
 
-.PHONY: build-with-models
-build-with-models:
+push-base: base
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF); \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION);
+
+.PHONY: sd-1.5
+sd-1.5: base
 	docker build \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VERSION=$(VERSION) \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-with-models \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-with-models \
-		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-with-models \
-		--target=with-models \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-sd-1.5 \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-sd-1.5 \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-sd-1.5 \
+		--target=sd-1.5 \
 		--file Dockerfile .; \
+
+push-sd-1.5: sd-1.4
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-sd-1.5; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-sd-1.5; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-sd-1.5;
+
+.PHONY: svd-14-frame
+svd-14-frame: base
+	docker build \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg VCS_REF=$(VCS_REF) \
+		--build-arg VERSION=$(VERSION) \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-14-frame \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-14-frame \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-14-frame \
+		--target=svd-14-frame \
+		--file Dockerfile .; \
+
+push-svd-14-frame: svd-14-frame
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-14-frame; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-14-frame; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-14-frame;
+
+.PHONY: svd-25-frame
+svd-25-frame: base
+	docker build \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg VCS_REF=$(VCS_REF) \
+		--build-arg VERSION=$(VERSION) \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-25-frame \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-25-frame \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-25-frame \
+		--target=svd-25-frame \
+		--file Dockerfile .; \
+
+push-svd-25-frame: svd-25-frame
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd-25-frame; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd-25-frame; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd-25-frame;
+
+.PHONY: svd
+svd: base
+	docker build \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg VCS_REF=$(VCS_REF) \
+		--build-arg VERSION=$(VERSION) \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd \
+		--target=svd \
+		--file Dockerfile .; \
+
+push-svd: svd
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-svd; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-svd; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-svd;
+
+.PHONY: all-models
+all-models: base sd-1.5 svd-14-frame svd-25-frame svd
+	docker build \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg VCS_REF=$(VCS_REF) \
+		--build-arg VERSION=$(VERSION) \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-all-models \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-all-models \
+		--tag $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-all-models \
+		--file Dockerfile .; \
+
+push-all-models: all-models
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-all-models; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-all-models; \
+	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-all-models;
 
 # List built images
 .PHONY: list
@@ -55,34 +136,6 @@ list:
 .PHONY: test
 test:
 	docker run -t $(REPO_NAMESPACE)/$(IMAGE_NAME) env | grep VERSION | grep $(VERSION)
-
-# Push images to repo
-.PHONY: push
-push:
-	echo "$$REPO_PASSWORD" | docker login -u "$(REPO_USERNAME)" --password-stdin; \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest; \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF); \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION);
-
-push-with-models:
-	echo "$$REPO_PASSWORD" | docker login -u "$(REPO_USERNAME)" --password-stdin; \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-with-models; \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-with-models; \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-with-models;
-
-# Update README on registry
-.PHONY: push-readme
-push-readme:
-	echo "Authenticating to $(REPO_API_URL)"; \
-		token=$$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "$(REPO_USERNAME)", "password": "'"$$REPO_PASSWORD"'"}' $(REPO_API_URL)/users/login/ | jq -r .token); \
-		code=$$(jq -n --arg description "$$(<README.md)" '{"registry":"registry-1.docker.io","full_description": $$description }' | curl -s -o /dev/null  -L -w "%{http_code}" $(REPO_API_URL)/repositories/$(REPO_NAMESPACE)/$(IMAGE_NAME)/ -d @- -X PATCH -H "Content-Type: application/json" -H "Authorization: JWT $$token"); \
-		if [ "$$code" != "200" ]; \
-		then \
-			echo "Failed to update README.md"; \
-			exit 1; \
-		else \
-			echo "Success"; \
-		fi;
 
 # Remove existing images
 .PHONY: clean
