@@ -51,7 +51,7 @@ sd-1.5: base
 		--target=sd-1.5 \
 		--file Dockerfile .; \
 
-push-sd-1.5: sd-1.4
+push-sd-1.5: sd-1.5
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest-sd-1.5; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF)-sd-1.5; \
 	docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION)-sd-1.5;
