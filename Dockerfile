@@ -65,7 +65,7 @@ LABEL \
 
 # Setup our environment variables.
 ENV \
-    PATH="/usr/local/bin:$PATH" \
+    PATH="/usr/local/bin:/comfyui/.local/bin:$PATH" \
     VERSION="${VERSION}"
 
 # Drop down to our unprivileged user.
