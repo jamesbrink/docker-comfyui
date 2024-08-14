@@ -3,6 +3,9 @@
 # Ensure ComfyUI is synced to the volume.
 rsync -avP --update /app/ /comfyui/
 
+# Ensure proper ownership (mostly for volumes)
+sudo chown -R comfyui:users /comfyui
+
 # Simple helpers to make an easy clickable link on console.
 export LOCAL_ADDRESS="$(ip route get 1 | awk '{print $(NF-2);exit}')"
 export PUBLIC_ADDRESS="$(curl ipinfo.io/ip)"

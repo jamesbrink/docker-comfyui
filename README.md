@@ -19,7 +19,7 @@ Optionally run container on host nework:
 docker run -d --gpus all --network=host -v ./models:/comfyui/models -v ./output:/comfyui/output -v ./input:/comfyui/input --name comfyui jamesbrink/comfyui
 ```
 
-If you want to share models between ComfyUI and tools like Fooocus, you can map the volumes like so: 
+If you want to share models between ComfyUI and tools like Fooocus, you can map the volumes like so:  
 
 ```shell
 mkdir -p ~/AI/ComfyUI

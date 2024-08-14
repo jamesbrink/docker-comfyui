@@ -10,8 +10,8 @@ CUDA_VERSION            ?= 12.2.2
 BASE_IMAGE              ?= nvidia/cuda:$(CUDA_VERSION)-runtime-ubuntu22.04
 MODELS                  ?= false
 SED                     := $(shell [[ `command -v gsed` ]] && echo gsed || echo sed)
-VERSION                 := v0.0.5
-UI_MANAGER_VERSION      ?= 2.48.6
+VERSION                 := v0.0.8
+UI_MANAGER_VERSION      ?= main
 VCS_REF                 := $(shell git rev-parse --short HEAD 2>/dev/null || echo "0000000")
 BUILD_DATE              := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 

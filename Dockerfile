@@ -15,32 +15,39 @@ RUN set -xe; \
         python3 \
         python3-pip \
         rsync \
+        sudo \
+        vim \
         wget; \
+    apt clean; \
     rm -rf /var/lib/apt/lists/*; \
     rm -rf /var/cache/apt;
 
 # Create our group & user.
 RUN set -xe; \
-    useradd -u 1000 -g 100 -r -d /comfyui -s /bin/sh comfyui; \
+    useradd -u 1000 -g 100 -G sudo -r -d /comfyui -s /bin/sh comfyui; \
+    echo "comfyui ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers; \
     mkdir -p /comfyui; \
     mkdir -p /app;
 
 # Setup ComfyUI
-ARG VERSION=v0.0.5
+ARG VERSION=v0.0.8
 RUN set -xe; \
-    git clone --branch ${VERSION} --depth 1 https://github.com/comfyanonymous/ComfyUI.git /app; \
+    # git clone --branch ${VERSION} --depth 1 https://github.com/comfyanonymous/ComfyUI.git /app; \
+    git clone https://github.com/comfyanonymous/ComfyUI.git /app; \
     cd /app; \
+    git fetch --all --tags; \
+    git checkout ${VERSION}; \
     pip install --no-cache-dir -r requirements.txt; \
-    pip install --no-cache-dir comfy-cli; \
-    chown -R comfyui:users /app;
+    pip install --no-cache-dir comfy-cli;
 
 # Setup ComfyUI Manager
 ARG UI_MANAGER_VERSION=2.48.6
 RUN set -xe; \
-    git clone --branch ${UI_MANAGER_VERSION} --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git /app/custom_nodes/ComfyUI-Manager; \
+    git clone https://github.com/ltdrdata/ComfyUI-Manager.git /app/custom_nodes/ComfyUI-Manager; \
     cd /app/custom_nodes/ComfyUI-Manager; \
-    pip install --no-cache-dir -r requirements.txt; \
-    chown -R comfyui:users /app/custom_nodes/ComfyUI-Manager;
+    git fetch --all --tags; \
+    git checkout ${UI_MANAGER_VERSION}; \
+    pip install --no-cache-dir -r requirements.txt;
 
 # Copy our entrypoint into the container.
 COPY ./runtime-assets /
@@ -67,12 +74,21 @@ LABEL \
 
 # Setup our environment variables.
 ENV \
+    HOME="/comfyui" \
     PATH="/usr/local/bin:/comfyui/.local/bin:$PATH" \
     VERSION="${VERSION}"
 
 # Drop down to our unprivileged user.
 USER comfyui
 WORKDIR /comfyui
+
+RUN set -xe; \
+    git config --global user.name "ComfyUI"; \
+    git config --global user.email "ComfyUI@urandom.io"; \
+    git config --global init.defaultBranch main; \
+    git config --global core.editor "vim"; \
+    git config --global --add safe.directory /comfyui; \
+    git config --global --add safe.directory /comfyui/custom_nodes/ComfyUI-Manager;
 
 # Expose our http port.
 EXPOSE 8188
