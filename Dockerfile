@@ -32,7 +32,6 @@ RUN set -xe; \
 # Setup ComfyUI
 ARG VERSION=v0.0.8
 RUN set -xe; \
-    # git clone --branch ${VERSION} --depth 1 https://github.com/comfyanonymous/ComfyUI.git /app; \
     git clone https://github.com/comfyanonymous/ComfyUI.git /app; \
     cd /app; \
     git fetch --all --tags; \
@@ -41,7 +40,7 @@ RUN set -xe; \
     pip install --no-cache-dir comfy-cli;
 
 # Setup ComfyUI Manager
-ARG UI_MANAGER_VERSION=2.48.6
+ARG UI_MANAGER_VERSION=main
 RUN set -xe; \
     git clone https://github.com/ltdrdata/ComfyUI-Manager.git /app/custom_nodes/ComfyUI-Manager; \
     cd /app/custom_nodes/ComfyUI-Manager; \
@@ -58,15 +57,11 @@ RUN set -xe; \
     chown -R comfyui:users /app; \
     chown -R comfyui:users /comfyui;
 
-ARG VCS_REF
-ARG BUILD_DATE
-
 # Labels / Metadata.
 LABEL \
     org.opencontainers.image.authors="James Brink <brink.james@gmail.com>" \
-    org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.description="ComfyUI Interface for Stable Diffusion" \
-    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.revision="0" \
     org.opencontainers.image.source="https://github.com/jamesbrink/comfyui" \
     org.opencontainers.image.title="comfyui" \
     org.opencontainers.image.vendor="jamesbrink" \
@@ -82,6 +77,7 @@ ENV \
 USER comfyui
 WORKDIR /comfyui
 
+# Setup git
 RUN set -xe; \
     git config --global user.name "ComfyUI"; \
     git config --global user.email "ComfyUI@urandom.io"; \
