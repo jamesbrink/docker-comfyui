@@ -5,14 +5,14 @@ if [ ! -z "${PUID}" ] && [ ! -z "${PGID}" ]; then
     echo "Updating UID:GID to ${PUID}:${PGID}"
     # Update the GID first
     if [ "${PGID}" != "$(id -g comfyui)" ]; then
-        groupmod -o -g "${PGID}" users
+        sudo groupmod -o -g "${PGID}" users
     fi
     # Update the UID
     if [ "${PUID}" != "$(id -u comfyui)" ]; then
-        usermod -o -u "${PUID}" comfyui
+        sudo usermod -o -u "${PUID}" comfyui
     fi
     # Fix ownership of key directories
-    chown -R comfyui:users /comfyui /app
+    sudo chown -R comfyui:users /comfyui /app
 fi
 
 # Start Xvfb in background
