@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# Update UID/GID if provided
+if [ ! -z "${PUID}" ] && [ ! -z "${PGID}" ]; then
+    echo "Updating UID:GID to ${PUID}:${PGID}"
+    # Update the GID first
+    if [ "${PGID}" != "$(id -g comfyui)" ]; then
+        groupmod -o -g "${PGID}" users
+    fi
+    # Update the UID
+    if [ "${PUID}" != "$(id -u comfyui)" ]; then
+        usermod -o -u "${PUID}" comfyui
+    fi
+    # Fix ownership of key directories
+    chown -R comfyui:users /comfyui /app
+fi
+
 # Start Xvfb in background
 Xvfb :99 -screen 0 1024x768x24 -ac +extension GLX +render -noreset &
 export DISPLAY=:99

@@ -21,10 +21,12 @@ RUN set -xe; \
         libgl1-mesa-glx \
         libglib2.0-0 \
         libglu1-mesa-dev \
+        libglu1-mesa-dev \
         libglvnd-dev \
         libglx0 \
-        libopengl0 \
         libopencv-dev \
+        libopengl0 \
+        libosmesa6-dev \
         libx11-dev \
         libxcursor-dev \
         libxi-dev \
@@ -99,8 +101,12 @@ LABEL \
 ENV \
     DISPLAY=:99 \
     HOME="/comfyui" \
+    MODERNGL_BACKEND=osmesa \
     NVIDIA_DRIVER_CAPABILITIES=all \
     PATH="/usr/local/bin:/comfyui/.local/bin:$PATH" \
+    PGID=100 \
+    PUID=1000 \
+    PYOPENGL_PLATFORM=osmesa \
     PYTHONUNBUFFERED=1 \
     VERSION="${VERSION}"
 
