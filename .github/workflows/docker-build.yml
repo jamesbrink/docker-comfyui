@@ -30,6 +30,16 @@ jobs:
         shell: bash
         run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_ENV
 
+      - name: Set Docker tags
+        id: docker_meta
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "DOCKER_TAGS=jamesbrink/comfyui:latest,jamesbrink/comfyui:v0.3.10" >> $GITHUB_ENV
+          else
+            echo "DOCKER_TAGS=jamesbrink/comfyui:${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+          fi
+
       - name: Build and tag Docker image
         uses: docker/build-push-action@v6
         with:
@@ -40,8 +50,4 @@ jobs:
           build-args: |
             BASE_IMAGE=nvidia/cuda:12.6.3-runtime-ubuntu22.04
             VERSION=v0.3.10
-          tags: |
-            jamesbrink/comfyui:latest
-            jamesbrink/comfyui:${{ github.sha }}
-            jamesbrink/comfyui:${{ env.BRANCH_NAME }}
-            jamesbrink/comfyui:v0.3.10
+          tags: ${{ env.DOCKER_TAGS }}
