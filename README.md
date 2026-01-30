@@ -1,4 +1,15 @@
-# Docker Image for ComfyUI (Stable Diffusion)
+> [!CAUTION]
+> ## This Repository Has Been Deprecated
+>
+> This project has been superseded by a new, improved version built with Nix. The new repository offers better maintainability, reproducible builds, and continued development.
+>
+> **Please use the new repository:** https://github.com/utensils/comfyui-nix
+>
+> The new version includes a Docker image and is a direct continuation of this project. All new issues and feature requests should be opened there.
+
+---
+
+# Docker Image for ComfyUI (Stable Diffusion) [DEPRECATED]
 
 ## About
 
